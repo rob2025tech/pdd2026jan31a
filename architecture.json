@@ -1,0 +1,1628 @@
+[
+  {
+    "reason": "Prisma schema defines the database structure for users, matches, and messages",
+    "description": "Database schema using Prisma ORM with User, Match, and Message models. Users have native/learning languages, matches connect language partners, messages enable chat.",
+    "dependencies": [],
+    "priority": 1,
+    "filename": "prisma_schema_Prisma.prompt",
+    "filepath": "prisma/schema.prisma",
+    "tags": [
+      "database",
+      "prisma",
+      "schema"
+    ],
+    "context_urls": [
+      {
+        "url": "https://www.prisma.io/docs/orm/prisma-schema",
+        "purpose": "schema-api-reference"
+      },
+      {
+        "url": "https://www.prisma.io/docs/orm/prisma-schema/data-model/models",
+        "purpose": "models-and-relations"
+      }
+    ],
+    "interface": {
+      "type": "config",
+      "config": {
+        "keys": [
+          {
+            "name": "DATABASE_URL",
+            "type": "string",
+            "required": true,
+            "source": "env"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Environment configuration centralizes all environment variables for the backend",
+    "description": "Dotenv configuration loader for environment variables including database URL, JWT secret, OpenAI API key, and port settings.",
+    "dependencies": [],
+    "priority": 2,
+    "filename": "env_config_JavaScript.prompt",
+    "filepath": "backend/config/env.js",
+    "tags": [
+      "backend",
+      "config"
+    ],
+    "context_urls": [
+      {
+        "url": "https://github.com/motdotla/dotenv#readme",
+        "purpose": "dotenv-usage"
+      }
+    ],
+    "interface": {
+      "type": "config",
+      "config": {
+        "keys": [
+          {
+            "name": "DATABASE_URL",
+            "type": "string",
+            "required": true,
+            "source": "env"
+          },
+          {
+            "name": "JWT_SECRET",
+            "type": "string",
+            "required": true,
+            "source": "env"
+          },
+          {
+            "name": "OPENAI_API_KEY",
+            "type": "string",
+            "required": true,
+            "source": "env"
+          },
+          {
+            "name": "PORT",
+            "type": "number",
+            "required": false,
+            "source": "env"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Prisma client singleton provides database access across the backend",
+    "description": "Singleton Prisma client instance for database operations. Handles connection pooling and prevents multiple instances in development.",
+    "dependencies": [
+      "prisma_schema_Prisma.prompt"
+    ],
+    "priority": 3,
+    "filename": "prisma_client_JavaScript.prompt",
+    "filepath": "backend/config/prisma.js",
+    "tags": [
+      "backend",
+      "database",
+      "prisma"
+    ],
+    "context_urls": [
+      {
+        "url": "https://www.prisma.io/docs/orm/prisma-client",
+        "purpose": "client-api-reference"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "prisma",
+            "signature": "const prisma = new PrismaClient()",
+            "returns": "PrismaClient instance"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "JWT utilities handle token generation and verification for authentication",
+    "description": "Functions to sign JWT tokens with user payload and verify tokens for protected routes. Uses jsonwebtoken library.",
+    "dependencies": [
+      "env_config_JavaScript.prompt"
+    ],
+    "priority": 4,
+    "filename": "jwt_utils_JavaScript.prompt",
+    "filepath": "backend/utils/jwt.js",
+    "tags": [
+      "backend",
+      "auth",
+      "jwt"
+    ],
+    "context_urls": [
+      {
+        "url": "https://github.com/auth0/node-jsonwebtoken#readme",
+        "purpose": "jwt-api-reference"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "generateToken",
+            "signature": "generateToken(userId, email)",
+            "returns": "string (JWT token)"
+          },
+          {
+            "name": "verifyToken",
+            "signature": "verifyToken(token)",
+            "returns": "object (decoded payload)"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Error handler middleware provides centralized error handling for Express",
+    "description": "Express error handling middleware that catches errors, logs them, and returns appropriate HTTP responses with error messages.",
+    "dependencies": [],
+    "priority": 5,
+    "filename": "error_handler_JavaScript.prompt",
+    "filepath": "backend/middleware/errorHandler.js",
+    "tags": [
+      "backend",
+      "middleware",
+      "error"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/error-handling.html",
+        "purpose": "express-error-handling"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "errorHandler",
+            "signature": "errorHandler(err, req, res, next)",
+            "returns": "void"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Auth middleware protects routes by verifying JWT tokens",
+    "description": "Express middleware that extracts JWT from Authorization header, verifies it, and attaches user data to request object.",
+    "dependencies": [
+      "jwt_utils_JavaScript.prompt"
+    ],
+    "priority": 6,
+    "filename": "auth_middleware_JavaScript.prompt",
+    "filepath": "backend/middleware/auth.js",
+    "tags": [
+      "backend",
+      "middleware",
+      "auth"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/writing-middleware.html",
+        "purpose": "express-middleware-guide"
+      },
+      {
+        "url": "https://jwt.io/introduction",
+        "purpose": "jwt-middleware-tutorial"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "authenticate",
+            "signature": "authenticate(req, res, next)",
+            "returns": "void"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "User model defines the data structure and validation for users",
+    "description": "User data model with fields for email, password, native language, learning language, and profile info. Includes validation schemas.",
+    "dependencies": [
+      "prisma_schema_Prisma.prompt"
+    ],
+    "priority": 7,
+    "filename": "user_model_JavaScript.prompt",
+    "filepath": "backend/models/User.js",
+    "tags": [
+      "backend",
+      "model"
+    ],
+    "context_urls": [
+      {
+        "url": "https://www.prisma.io/docs/orm/prisma-client/queries/crud",
+        "purpose": "prisma-crud-operations"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "UserSchema",
+            "signature": "const UserSchema",
+            "returns": "validation schema"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Match model defines the data structure for language partner matches",
+    "description": "Match data model connecting two users as language partners. Includes status (pending, active, declined) and creation timestamp.",
+    "dependencies": [
+      "prisma_schema_Prisma.prompt"
+    ],
+    "priority": 8,
+    "filename": "match_model_JavaScript.prompt",
+    "filepath": "backend/models/Match.js",
+    "tags": [
+      "backend",
+      "model"
+    ],
+    "context_urls": [
+      {
+        "url": "https://www.prisma.io/docs/orm/prisma-client/queries/crud",
+        "purpose": "prisma-crud-operations"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "MatchSchema",
+            "signature": "const MatchSchema",
+            "returns": "validation schema"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Message model defines the data structure for chat messages",
+    "description": "Message data model for chat between matched users. Includes sender, receiver, content, timestamp, and read status.",
+    "dependencies": [
+      "prisma_schema_Prisma.prompt"
+    ],
+    "priority": 9,
+    "filename": "message_model_JavaScript.prompt",
+    "filepath": "backend/models/Message.js",
+    "tags": [
+      "backend",
+      "model"
+    ],
+    "context_urls": [
+      {
+        "url": "https://www.prisma.io/docs/orm/prisma-client/queries/crud",
+        "purpose": "prisma-crud-operations"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "MessageSchema",
+            "signature": "const MessageSchema",
+            "returns": "validation schema"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "OpenAI service integrates GPT-4 for conversational AI tutoring",
+    "description": "Service layer for OpenAI API integration. Provides functions to generate AI tutor responses based on conversation context and language level.",
+    "dependencies": [
+      "env_config_JavaScript.prompt"
+    ],
+    "priority": 10,
+    "filename": "openai_service_JavaScript.prompt",
+    "filepath": "backend/services/openaiService.js",
+    "tags": [
+      "backend",
+      "service",
+      "ai"
+    ],
+    "context_urls": [
+      {
+        "url": "https://platform.openai.com/docs/api-reference/chat",
+        "purpose": "openai-chat-api"
+      },
+      {
+        "url": "https://platform.openai.com/docs/guides/chat-completions",
+        "purpose": "chat-completions-guide"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "generateTutorResponse",
+            "signature": "generateTutorResponse(conversationHistory, userLanguageLevel)",
+            "returns": "Promise<string>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "TTS service provides text-to-speech functionality for language learning",
+    "description": "Optional text-to-speech service using OpenAI TTS API. Converts text to audio for pronunciation practice.",
+    "dependencies": [
+      "env_config_JavaScript.prompt"
+    ],
+    "priority": 11,
+    "filename": "tts_service_JavaScript.prompt",
+    "filepath": "backend/services/ttsService.js",
+    "tags": [
+      "backend",
+      "service",
+      "tts"
+    ],
+    "context_urls": [
+      {
+        "url": "https://platform.openai.com/docs/api-reference/audio/createSpeech",
+        "purpose": "openai-tts-api"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "textToSpeech",
+            "signature": "textToSpeech(text, language)",
+            "returns": "Promise<Buffer>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Auth service handles user registration, login, and password management",
+    "description": "Authentication service with functions for user registration (with bcrypt hashing), login (with JWT generation), and password verification.",
+    "dependencies": [
+      "prisma_client_JavaScript.prompt",
+      "user_model_JavaScript.prompt",
+      "jwt_utils_JavaScript.prompt"
+    ],
+    "priority": 12,
+    "filename": "auth_service_JavaScript.prompt",
+    "filepath": "backend/services/authService.js",
+    "tags": [
+      "backend",
+      "service",
+      "auth"
+    ],
+    "context_urls": [
+      {
+        "url": "https://github.com/kelektiv/node.bcrypt.js#readme",
+        "purpose": "bcrypt-hashing"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "registerUser",
+            "signature": "registerUser(email, password, nativeLanguage, learningLanguage)",
+            "returns": "Promise<{user, token}>"
+          },
+          {
+            "name": "loginUser",
+            "signature": "loginUser(email, password)",
+            "returns": "Promise<{user, token}>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "User service provides business logic for user profile management",
+    "description": "Service layer for user operations including profile retrieval, updates, and listing users by language preferences.",
+    "dependencies": [
+      "prisma_client_JavaScript.prompt",
+      "user_model_JavaScript.prompt"
+    ],
+    "priority": 13,
+    "filename": "user_service_JavaScript.prompt",
+    "filepath": "backend/services/userService.js",
+    "tags": [
+      "backend",
+      "service"
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "getUserById",
+            "signature": "getUserById(userId)",
+            "returns": "Promise<User>"
+          },
+          {
+            "name": "updateUserProfile",
+            "signature": "updateUserProfile(userId, updates)",
+            "returns": "Promise<User>"
+          },
+          {
+            "name": "getUsersByLanguage",
+            "signature": "getUsersByLanguage(nativeLanguage, learningLanguage)",
+            "returns": "Promise<User[]>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Matching service implements the algorithm to connect language partners",
+    "description": "Service for matching users based on complementary language preferences. Creates and manages match requests between users.",
+    "dependencies": [
+      "prisma_client_JavaScript.prompt",
+      "match_model_JavaScript.prompt",
+      "user_model_JavaScript.prompt"
+    ],
+    "priority": 14,
+    "filename": "matching_service_JavaScript.prompt",
+    "filepath": "backend/services/matchingService.js",
+    "tags": [
+      "backend",
+      "service",
+      "matching"
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "findPotentialMatches",
+            "signature": "findPotentialMatches(userId)",
+            "returns": "Promise<User[]>"
+          },
+          {
+            "name": "createMatchRequest",
+            "signature": "createMatchRequest(userId1, userId2)",
+            "returns": "Promise<Match>"
+          },
+          {
+            "name": "acceptMatch",
+            "signature": "acceptMatch(matchId)",
+            "returns": "Promise<Match>"
+          },
+          {
+            "name": "declineMatch",
+            "signature": "declineMatch(matchId)",
+            "returns": "Promise<Match>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Chat service handles message sending and retrieval between matched users",
+    "description": "Service for chat functionality. Manages message creation, retrieval of conversation history, and marking messages as read.",
+    "dependencies": [
+      "prisma_client_JavaScript.prompt",
+      "message_model_JavaScript.prompt"
+    ],
+    "priority": 15,
+    "filename": "chat_service_JavaScript.prompt",
+    "filepath": "backend/services/chatService.js",
+    "tags": [
+      "backend",
+      "service",
+      "chat"
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "sendMessage",
+            "signature": "sendMessage(senderId, receiverId, content)",
+            "returns": "Promise<Message>"
+          },
+          {
+            "name": "getConversation",
+            "signature": "getConversation(userId1, userId2)",
+            "returns": "Promise<Message[]>"
+          },
+          {
+            "name": "markAsRead",
+            "signature": "markAsRead(messageId)",
+            "returns": "Promise<Message>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "AI Tutor service coordinates AI-powered language tutoring sessions",
+    "description": "Service that combines chat functionality with OpenAI integration to provide AI tutoring. Manages tutoring sessions and conversation context.",
+    "dependencies": [
+      "openai_service_JavaScript.prompt",
+      "chat_service_JavaScript.prompt"
+    ],
+    "priority": 16,
+    "filename": "ai_tutor_service_JavaScript.prompt",
+    "filepath": "backend/services/aiTutorService.js",
+    "tags": [
+      "backend",
+      "service",
+      "ai"
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "startTutoringSession",
+            "signature": "startTutoringSession(userId, language)",
+            "returns": "Promise<{sessionId}>"
+          },
+          {
+            "name": "sendToTutor",
+            "signature": "sendToTutor(sessionId, userMessage)",
+            "returns": "Promise<{aiResponse}>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Auth controller handles HTTP requests for authentication endpoints",
+    "description": "Express controller for authentication routes. Validates input, calls auth service, and returns appropriate HTTP responses.",
+    "dependencies": [
+      "auth_service_JavaScript.prompt"
+    ],
+    "priority": 17,
+    "filename": "auth_controller_JavaScript.prompt",
+    "filepath": "backend/controllers/authController.js",
+    "tags": [
+      "backend",
+      "controller"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "purpose": "express-routing-guide"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "register",
+            "signature": "register(req, res, next)",
+            "returns": "void"
+          },
+          {
+            "name": "login",
+            "signature": "login(req, res, next)",
+            "returns": "void"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "User controller handles HTTP requests for user profile endpoints",
+    "description": "Express controller for user routes. Handles profile retrieval, updates, and user listing with proper error handling.",
+    "dependencies": [
+      "user_service_JavaScript.prompt"
+    ],
+    "priority": 18,
+    "filename": "user_controller_JavaScript.prompt",
+    "filepath": "backend/controllers/userController.js",
+    "tags": [
+      "backend",
+      "controller"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "purpose": "express-routing-guide"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "getProfile",
+            "signature": "getProfile(req, res, next)",
+            "returns": "void"
+          },
+          {
+            "name": "updateProfile",
+            "signature": "updateProfile(req, res, next)",
+            "returns": "void"
+          },
+          {
+            "name": "listUsers",
+            "signature": "listUsers(req, res, next)",
+            "returns": "void"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Matching controller handles HTTP requests for match endpoints",
+    "description": "Express controller for matching routes. Manages match discovery, requests, acceptance, and declining.",
+    "dependencies": [
+      "matching_service_JavaScript.prompt"
+    ],
+    "priority": 19,
+    "filename": "matching_controller_JavaScript.prompt",
+    "filepath": "backend/controllers/matchingController.js",
+    "tags": [
+      "backend",
+      "controller"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "purpose": "express-routing-guide"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "getPotentialMatches",
+            "signature": "getPotentialMatches(req, res, next)",
+            "returns": "void"
+          },
+          {
+            "name": "sendMatchRequest",
+            "signature": "sendMatchRequest(req, res, next)",
+            "returns": "void"
+          },
+          {
+            "name": "respondToMatch",
+            "signature": "respondToMatch(req, res, next)",
+            "returns": "void"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Chat controller handles HTTP requests for chat endpoints",
+    "description": "Express controller for chat routes. Manages message sending, conversation retrieval, and read receipts.",
+    "dependencies": [
+      "chat_service_JavaScript.prompt"
+    ],
+    "priority": 20,
+    "filename": "chat_controller_JavaScript.prompt",
+    "filepath": "backend/controllers/chatController.js",
+    "tags": [
+      "backend",
+      "controller"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "purpose": "express-routing-guide"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "sendMessage",
+            "signature": "sendMessage(req, res, next)",
+            "returns": "void"
+          },
+          {
+            "name": "getMessages",
+            "signature": "getMessages(req, res, next)",
+            "returns": "void"
+          },
+          {
+            "name": "markRead",
+            "signature": "markRead(req, res, next)",
+            "returns": "void"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "AI Tutor controller handles HTTP requests for AI tutoring endpoints",
+    "description": "Express controller for AI tutor routes. Manages tutoring sessions and AI conversation endpoints.",
+    "dependencies": [
+      "ai_tutor_service_JavaScript.prompt"
+    ],
+    "priority": 21,
+    "filename": "ai_tutor_controller_JavaScript.prompt",
+    "filepath": "backend/controllers/aiTutorController.js",
+    "tags": [
+      "backend",
+      "controller",
+      "ai"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "purpose": "express-routing-guide"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "startSession",
+            "signature": "startSession(req, res, next)",
+            "returns": "void"
+          },
+          {
+            "name": "chatWithTutor",
+            "signature": "chatWithTutor(req, res, next)",
+            "returns": "void"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Auth routes define the Express routing for authentication endpoints",
+    "description": "Express router for authentication endpoints including POST /register and POST /login.",
+    "dependencies": [
+      "auth_controller_JavaScript.prompt"
+    ],
+    "priority": 22,
+    "filename": "auth_routes_JavaScript.prompt",
+    "filepath": "backend/routes/authRoutes.js",
+    "tags": [
+      "backend",
+      "routes"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "purpose": "express-routing-guide"
+      }
+    ],
+    "interface": {
+      "type": "api",
+      "api": {
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/api/auth/register",
+            "auth": "none"
+          },
+          {
+            "method": "POST",
+            "path": "/api/auth/login",
+            "auth": "none"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "User routes define the Express routing for user profile endpoints",
+    "description": "Express router for user endpoints including GET /me, PATCH /me, and GET /users with JWT authentication.",
+    "dependencies": [
+      "user_controller_JavaScript.prompt",
+      "auth_middleware_JavaScript.prompt"
+    ],
+    "priority": 23,
+    "filename": "user_routes_JavaScript.prompt",
+    "filepath": "backend/routes/userRoutes.js",
+    "tags": [
+      "backend",
+      "routes"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "purpose": "express-routing-guide"
+      }
+    ],
+    "interface": {
+      "type": "api",
+      "api": {
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/api/users/me",
+            "auth": "jwt"
+          },
+          {
+            "method": "PATCH",
+            "path": "/api/users/me",
+            "auth": "jwt"
+          },
+          {
+            "method": "GET",
+            "path": "/api/users",
+            "auth": "jwt"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Matching routes define the Express routing for match endpoints",
+    "description": "Express router for matching endpoints including GET /matches, POST /matches, and PATCH /matches/:id with JWT authentication.",
+    "dependencies": [
+      "matching_controller_JavaScript.prompt",
+      "auth_middleware_JavaScript.prompt"
+    ],
+    "priority": 24,
+    "filename": "matching_routes_JavaScript.prompt",
+    "filepath": "backend/routes/matchingRoutes.js",
+    "tags": [
+      "backend",
+      "routes"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "purpose": "express-routing-guide"
+      }
+    ],
+    "interface": {
+      "type": "api",
+      "api": {
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/api/matches",
+            "auth": "jwt"
+          },
+          {
+            "method": "POST",
+            "path": "/api/matches",
+            "auth": "jwt"
+          },
+          {
+            "method": "PATCH",
+            "path": "/api/matches/:id",
+            "auth": "jwt"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Chat routes define the Express routing for chat endpoints",
+    "description": "Express router for chat endpoints including POST /messages, GET /messages/:userId, and PATCH /messages/:id/read with JWT authentication.",
+    "dependencies": [
+      "chat_controller_JavaScript.prompt",
+      "auth_middleware_JavaScript.prompt"
+    ],
+    "priority": 25,
+    "filename": "chat_routes_JavaScript.prompt",
+    "filepath": "backend/routes/chatRoutes.js",
+    "tags": [
+      "backend",
+      "routes"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "purpose": "express-routing-guide"
+      }
+    ],
+    "interface": {
+      "type": "api",
+      "api": {
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/api/chat/messages",
+            "auth": "jwt"
+          },
+          {
+            "method": "GET",
+            "path": "/api/chat/messages/:userId",
+            "auth": "jwt"
+          },
+          {
+            "method": "PATCH",
+            "path": "/api/chat/messages/:id/read",
+            "auth": "jwt"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "AI Tutor routes define the Express routing for AI tutoring endpoints",
+    "description": "Express router for AI tutor endpoints including POST /tutor/start and POST /tutor/chat with JWT authentication.",
+    "dependencies": [
+      "ai_tutor_controller_JavaScript.prompt",
+      "auth_middleware_JavaScript.prompt"
+    ],
+    "priority": 26,
+    "filename": "ai_tutor_routes_JavaScript.prompt",
+    "filepath": "backend/routes/aiTutorRoutes.js",
+    "tags": [
+      "backend",
+      "routes",
+      "ai"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/guide/routing.html",
+        "purpose": "express-routing-guide"
+      }
+    ],
+    "interface": {
+      "type": "api",
+      "api": {
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/api/tutor/start",
+            "auth": "jwt"
+          },
+          {
+            "method": "POST",
+            "path": "/api/tutor/chat",
+            "auth": "jwt"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Express app setup configures the main Express application",
+    "description": "Main Express app configuration with middleware (CORS, JSON parsing), route mounting, error handling, and server startup.",
+    "dependencies": [
+      "auth_routes_JavaScript.prompt",
+      "user_routes_JavaScript.prompt",
+      "matching_routes_JavaScript.prompt",
+      "chat_routes_JavaScript.prompt",
+      "ai_tutor_routes_JavaScript.prompt",
+      "error_handler_JavaScript.prompt",
+      "env_config_JavaScript.prompt"
+    ],
+    "priority": 27,
+    "filename": "express_app_JavaScript.prompt",
+    "filepath": "backend/server.js",
+    "tags": [
+      "backend",
+      "app"
+    ],
+    "context_urls": [
+      {
+        "url": "https://expressjs.com/en/starter/hello-world.html",
+        "purpose": "express-basic-app"
+      },
+      {
+        "url": "https://expressjs.com/en/resources/middleware/cors.html",
+        "purpose": "cors-middleware"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "app",
+            "signature": "const app = express()",
+            "returns": "Express application"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Auth context provides authentication state management for the React frontend",
+    "description": "React Context for managing authentication state including current user, token, login, logout, and registration functions.",
+    "dependencies": [],
+    "priority": 28,
+    "filename": "auth_context_JavaScriptReact.prompt",
+    "filepath": "frontend/src/context/AuthContext.jsx",
+    "tags": [
+      "frontend",
+      "context",
+      "auth"
+    ],
+    "context_urls": [
+      {
+        "url": "https://react.dev/reference/react/useContext",
+        "purpose": "react-context-api"
+      },
+      {
+        "url": "https://react.dev/learn/managing-state",
+        "purpose": "react-state-management"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "AuthProvider",
+            "signature": "AuthProvider({children})",
+            "returns": "JSX.Element"
+          },
+          {
+            "name": "useAuth",
+            "signature": "useAuth()",
+            "returns": "{user, token, login, logout, register}"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "API client provides centralized HTTP client for backend communication",
+    "description": "Axios instance configured with base URL and interceptors for attaching JWT tokens to requests and handling auth errors.",
+    "dependencies": [],
+    "priority": 29,
+    "filename": "api_client_JavaScript.prompt",
+    "filepath": "frontend/src/utils/apiClient.js",
+    "tags": [
+      "frontend",
+      "api"
+    ],
+    "context_urls": [
+      {
+        "url": "https://axios-http.com/docs/intro",
+        "purpose": "axios-getting-started"
+      },
+      {
+        "url": "https://axios-http.com/docs/interceptors",
+        "purpose": "axios-interceptors"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "apiClient",
+            "signature": "axios.create({baseURL, ...})",
+            "returns": "AxiosInstance"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Tailwind CSS configuration defines the design system for the frontend",
+    "description": "Tailwind CSS configuration file with custom theme colors, fonts, and responsive breakpoints for the application.",
+    "dependencies": [],
+    "priority": 30,
+    "filename": "tailwind_config_JavaScript.prompt",
+    "filepath": "frontend/tailwind.config.js",
+    "tags": [
+      "frontend",
+      "config",
+      "styles"
+    ],
+    "context_urls": [
+      {
+        "url": "https://tailwindcss.com/docs/configuration",
+        "purpose": "tailwind-config-reference"
+      }
+    ],
+    "interface": {
+      "type": "config",
+      "config": {
+        "keys": [
+          {
+            "name": "content",
+            "type": "array",
+            "required": true,
+            "source": "file"
+          },
+          {
+            "name": "theme",
+            "type": "object",
+            "required": false,
+            "source": "file"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Login page provides user interface for authentication",
+    "description": "React component for login page with email/password form, validation, error handling, and navigation to register page.",
+    "dependencies": [
+      "auth_context_JavaScriptReact.prompt",
+      "api_client_JavaScript.prompt"
+    ],
+    "priority": 31,
+    "filename": "login_page_JavaScriptReact.prompt",
+    "filepath": "frontend/src/pages/LoginPage.jsx",
+    "tags": [
+      "frontend",
+      "page",
+      "auth"
+    ],
+    "context_urls": [
+      {
+        "url": "https://react.dev/reference/react-dom/components/form",
+        "purpose": "react-forms"
+      },
+      {
+        "url": "https://react.dev/reference/react/useState",
+        "purpose": "react-usestate-hook"
+      }
+    ],
+    "interface": {
+      "type": "page",
+      "page": {
+        "route": "/login",
+        "params": [],
+        "dataSources": [
+          {
+            "kind": "api",
+            "source": "/api/auth/login",
+            "method": "POST",
+            "description": "User login endpoint"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Register page provides user interface for account creation",
+    "description": "React component for registration page with form for email, password, native language, and learning language selection.",
+    "dependencies": [
+      "auth_context_JavaScriptReact.prompt",
+      "api_client_JavaScript.prompt"
+    ],
+    "priority": 32,
+    "filename": "register_page_JavaScriptReact.prompt",
+    "filepath": "frontend/src/pages/RegisterPage.jsx",
+    "tags": [
+      "frontend",
+      "page",
+      "auth"
+    ],
+    "context_urls": [
+      {
+        "url": "https://react.dev/reference/react-dom/components/form",
+        "purpose": "react-forms"
+      },
+      {
+        "url": "https://react.dev/reference/react/useState",
+        "purpose": "react-usestate-hook"
+      }
+    ],
+    "interface": {
+      "type": "page",
+      "page": {
+        "route": "/register",
+        "params": [],
+        "dataSources": [
+          {
+            "kind": "api",
+            "source": "/api/auth/register",
+            "method": "POST",
+            "description": "User registration endpoint"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Dashboard page provides main user interface after login",
+    "description": "React component for dashboard showing user's matches, match requests, and quick navigation to chat and AI tutor features.",
+    "dependencies": [
+      "auth_context_JavaScriptReact.prompt",
+      "api_client_JavaScript.prompt"
+    ],
+    "priority": 33,
+    "filename": "dashboard_page_JavaScriptReact.prompt",
+    "filepath": "frontend/src/pages/DashboardPage.jsx",
+    "tags": [
+      "frontend",
+      "page"
+    ],
+    "context_urls": [
+      {
+        "url": "https://react.dev/reference/react/useEffect",
+        "purpose": "react-useeffect-hook"
+      }
+    ],
+    "interface": {
+      "type": "page",
+      "page": {
+        "route": "/dashboard",
+        "params": [],
+        "dataSources": [
+          {
+            "kind": "api",
+            "source": "/api/matches",
+            "method": "GET",
+            "description": "Get user matches",
+            "auth": "jwt"
+          },
+          {
+            "kind": "api",
+            "source": "/api/users/me",
+            "method": "GET",
+            "description": "Get current user profile",
+            "auth": "jwt"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Matching page displays potential language partners and match requests",
+    "description": "React component for matching page showing potential matches based on language preferences with accept/decline functionality.",
+    "dependencies": [
+      "auth_context_JavaScriptReact.prompt",
+      "api_client_JavaScript.prompt"
+    ],
+    "priority": 34,
+    "filename": "matching_page_JavaScriptReact.prompt",
+    "filepath": "frontend/src/pages/MatchingPage.jsx",
+    "tags": [
+      "frontend",
+      "page",
+      "matching"
+    ],
+    "context_urls": [
+      {
+        "url": "https://react.dev/reference/react/useEffect",
+        "purpose": "react-useeffect-hook"
+      }
+    ],
+    "interface": {
+      "type": "page",
+      "page": {
+        "route": "/matches",
+        "params": [],
+        "dataSources": [
+          {
+            "kind": "api",
+            "source": "/api/matches",
+            "method": "GET",
+            "description": "Get potential matches",
+            "auth": "jwt"
+          },
+          {
+            "kind": "api",
+            "source": "/api/matches",
+            "method": "POST",
+            "description": "Send match request",
+            "auth": "jwt"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Chat page provides real-time messaging interface between matched users",
+    "description": "React component for chat interface with message history, send functionality, and online status indicators.",
+    "dependencies": [
+      "auth_context_JavaScriptReact.prompt",
+      "api_client_JavaScript.prompt"
+    ],
+    "priority": 35,
+    "filename": "chat_page_JavaScriptReact.prompt",
+    "filepath": "frontend/src/pages/ChatPage.jsx",
+    "tags": [
+      "frontend",
+      "page",
+      "chat"
+    ],
+    "context_urls": [
+      {
+        "url": "https://react.dev/reference/react/useEffect",
+        "purpose": "react-useeffect-hook"
+      }
+    ],
+    "interface": {
+      "type": "page",
+      "page": {
+        "route": "/chat/:userId",
+        "params": [
+          {
+            "name": "userId",
+            "type": "string",
+            "description": "ID of the user to chat with"
+          }
+        ],
+        "dataSources": [
+          {
+            "kind": "api",
+            "source": "/api/chat/messages/:userId",
+            "method": "GET",
+            "description": "Get conversation history",
+            "auth": "jwt"
+          },
+          {
+            "kind": "api",
+            "source": "/api/chat/messages",
+            "method": "POST",
+            "description": "Send message",
+            "auth": "jwt"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "AI Tutor page provides interface for AI-powered language tutoring",
+    "description": "React component for AI tutor chat interface with conversation history and AI-generated language learning responses.",
+    "dependencies": [
+      "auth_context_JavaScriptReact.prompt",
+      "api_client_JavaScript.prompt"
+    ],
+    "priority": 36,
+    "filename": "ai_tutor_page_JavaScriptReact.prompt",
+    "filepath": "frontend/src/pages/AITutorPage.jsx",
+    "tags": [
+      "frontend",
+      "page",
+      "ai"
+    ],
+    "context_urls": [
+      {
+        "url": "https://react.dev/reference/react/useEffect",
+        "purpose": "react-useeffect-hook"
+      }
+    ],
+    "interface": {
+      "type": "page",
+      "page": {
+        "route": "/tutor",
+        "params": [],
+        "dataSources": [
+          {
+            "kind": "api",
+            "source": "/api/tutor/start",
+            "method": "POST",
+            "description": "Start tutoring session",
+            "auth": "jwt"
+          },
+          {
+            "kind": "api",
+            "source": "/api/tutor/chat",
+            "method": "POST",
+            "description": "Chat with AI tutor",
+            "auth": "jwt"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Navbar component provides navigation across the application",
+    "description": "React component for navigation bar with links to dashboard, matches, chat, AI tutor, and logout functionality.",
+    "dependencies": [
+      "auth_context_JavaScriptReact.prompt"
+    ],
+    "priority": 37,
+    "filename": "navbar_component_JavaScriptReact.prompt",
+    "filepath": "frontend/src/components/Navbar.jsx",
+    "tags": [
+      "frontend",
+      "component",
+      "ui"
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": []
+      }
+    }
+  },
+  {
+    "reason": "Match card component displays individual match information",
+    "description": "Reusable React component for displaying match card with user profile, languages, and action buttons.",
+    "dependencies": [],
+    "priority": 38,
+    "filename": "match_card_component_JavaScriptReact.prompt",
+    "filepath": "frontend/src/components/MatchCard.jsx",
+    "tags": [
+      "frontend",
+      "component",
+      "ui"
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [
+          {
+            "name": "match",
+            "type": "object",
+            "required": true
+          },
+          {
+            "name": "onAccept",
+            "type": "function",
+            "required": false
+          },
+          {
+            "name": "onDecline",
+            "type": "function",
+            "required": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Message bubble component displays individual chat messages",
+    "description": "Reusable React component for rendering chat message bubbles with sender info, timestamp, and read status.",
+    "dependencies": [],
+    "priority": 39,
+    "filename": "message_bubble_component_JavaScriptReact.prompt",
+    "filepath": "frontend/src/components/MessageBubble.jsx",
+    "tags": [
+      "frontend",
+      "component",
+      "ui"
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [
+          {
+            "name": "message",
+            "type": "object",
+            "required": true
+          },
+          {
+            "name": "isOwnMessage",
+            "type": "boolean",
+            "required": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Chat input component provides message composition interface",
+    "description": "Reusable React component for chat input field with send button and optional TTS playback functionality.",
+    "dependencies": [],
+    "priority": 40,
+    "filename": "chat_input_component_JavaScriptReact.prompt",
+    "filepath": "frontend/src/components/ChatInput.jsx",
+    "tags": [
+      "frontend",
+      "component",
+      "ui"
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [
+          {
+            "name": "onSend",
+            "type": "function",
+            "required": true
+          },
+          {
+            "name": "placeholder",
+            "type": "string",
+            "required": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "App router configures React Router for client-side routing",
+    "description": "React Router setup with route definitions, protected routes, and navigation between pages.",
+    "dependencies": [
+      "login_page_JavaScriptReact.prompt",
+      "register_page_JavaScriptReact.prompt",
+      "dashboard_page_JavaScriptReact.prompt",
+      "matching_page_JavaScriptReact.prompt",
+      "chat_page_JavaScriptReact.prompt",
+      "ai_tutor_page_JavaScriptReact.prompt",
+      "navbar_component_JavaScriptReact.prompt",
+      "auth_context_JavaScriptReact.prompt"
+    ],
+    "priority": 41,
+    "filename": "app_router_JavaScriptReact.prompt",
+    "filepath": "frontend/src/App.jsx",
+    "tags": [
+      "frontend",
+      "router"
+    ],
+    "context_urls": [
+      {
+        "url": "https://reactrouter.com/en/main/start/tutorial",
+        "purpose": "react-router-tutorial"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "App",
+            "signature": "App()",
+            "returns": "JSX.Element"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Backend package.json defines Node.js dependencies and scripts",
+    "description": "NPM package configuration for backend with dependencies (Express, Prisma, bcrypt, jsonwebtoken, OpenAI SDK) and scripts (dev, start, migrate).",
+    "dependencies": [],
+    "priority": 42,
+    "filename": "backend_package_JSON.prompt",
+    "filepath": "backend/package.json",
+    "tags": [
+      "backend",
+      "config"
+    ],
+    "interface": {
+      "type": "config",
+      "config": {
+        "keys": [
+          {
+            "name": "dependencies",
+            "type": "object",
+            "required": true,
+            "source": "file"
+          },
+          {
+            "name": "scripts",
+            "type": "object",
+            "required": true,
+            "source": "file"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Frontend package.json defines React app dependencies and build scripts",
+    "description": "NPM package configuration for frontend with dependencies (React, React Router, Axios, Tailwind CSS) and scripts (dev, build, preview).",
+    "dependencies": [],
+    "priority": 43,
+    "filename": "frontend_package_JSON.prompt",
+    "filepath": "frontend/package.json",
+    "tags": [
+      "frontend",
+      "config"
+    ],
+    "interface": {
+      "type": "config",
+      "config": {
+        "keys": [
+          {
+            "name": "dependencies",
+            "type": "object",
+            "required": true,
+            "source": "file"
+          },
+          {
+            "name": "scripts",
+            "type": "object",
+            "required": true,
+            "source": "file"
+          }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Product Requirements Document (PRD)</title>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({startOnLoad:true,theme:'default'});
+window.addEventListener('load', () => {
+    const moduleData = {"prisma_schema_Prisma": {"filename": "prisma_schema_Prisma.prompt", "priority": 1, "description": "Database schema using Prisma ORM with User, Match, and Message models. Users have native/learning languages, matches connect language partners, messages enable chat.", "dependencies": [], "tags": ["database", "prisma", "schema"], "filepath": "prisma/schema.prisma"}, "env_config_JavaScript": {"filename": "env_config_JavaScript.prompt", "priority": 2, "description": "Dotenv configuration loader for environment variables including database URL, JWT secret, OpenAI API key, and port settings.", "dependencies": [], "tags": ["backend", "config"], "filepath": "backend/config/env.js"}, "prisma_client_JavaScript": {"filename": "prisma_client_JavaScript.prompt", "priority": 3, "description": "Singleton Prisma client instance for database operations. Handles connection pooling and prevents multiple instances in development.", "dependencies": ["prisma_schema_Prisma.prompt"], "tags": ["backend", "database", "prisma"], "filepath": "backend/config/prisma.js"}, "jwt_utils_JavaScript": {"filename": "jwt_utils_JavaScript.prompt", "priority": 4, "description": "Functions to sign JWT tokens with user payload and verify tokens for protected routes. Uses jsonwebtoken library.", "dependencies": ["env_config_JavaScript.prompt"], "tags": ["backend", "auth", "jwt"], "filepath": "backend/utils/jwt.js"}, "error_handler_JavaScript": {"filename": "error_handler_JavaScript.prompt", "priority": 5, "description": "Express error handling middleware that catches errors, logs them, and returns appropriate HTTP responses with error messages.", "dependencies": [], "tags": ["backend", "middleware", "error"], "filepath": "backend/middleware/errorHandler.js"}, "auth_middleware_JavaScript": {"filename": "auth_middleware_JavaScript.prompt", "priority": 6, "description": "Express middleware that extracts JWT from Authorization header, verifies it, and attaches user data to request object.", "dependencies": ["jwt_utils_JavaScript.prompt"], "tags": ["backend", "middleware", "auth"], "filepath": "backend/middleware/auth.js"}, "user_model_JavaScript": {"filename": "user_model_JavaScript.prompt", "priority": 7, "description": "User data model with fields for email, password, native language, learning language, and profile info. Includes validation schemas.", "dependencies": ["prisma_schema_Prisma.prompt"], "tags": ["backend", "model"], "filepath": "backend/models/User.js"}, "match_model_JavaScript": {"filename": "match_model_JavaScript.prompt", "priority": 8, "description": "Match data model connecting two users as language partners. Includes status (pending, active, declined) and creation timestamp.", "dependencies": ["prisma_schema_Prisma.prompt"], "tags": ["backend", "model"], "filepath": "backend/models/Match.js"}, "message_model_JavaScript": {"filename": "message_model_JavaScript.prompt", "priority": 9, "description": "Message data model for chat between matched users. Includes sender, receiver, content, timestamp, and read status.", "dependencies": ["prisma_schema_Prisma.prompt"], "tags": ["backend", "model"], "filepath": "backend/models/Message.js"}, "openai_service_JavaScript": {"filename": "openai_service_JavaScript.prompt", "priority": 10, "description": "Service layer for OpenAI API integration. Provides functions to generate AI tutor responses based on conversation context and language level.", "dependencies": ["env_config_JavaScript.prompt"], "tags": ["backend", "service", "ai"], "filepath": "backend/services/openaiService.js"}, "tts_service_JavaScript": {"filename": "tts_service_JavaScript.prompt", "priority": 11, "description": "Optional text-to-speech service using OpenAI TTS API. Converts text to audio for pronunciation practice.", "dependencies": ["env_config_JavaScript.prompt"], "tags": ["backend", "service", "tts"], "filepath": "backend/services/ttsService.js"}, "auth_service_JavaScript": {"filename": "auth_service_JavaScript.prompt", "priority": 12, "description": "Authentication service with functions for user registration (with bcrypt hashing), login (with JWT generation), and password verification.", "dependencies": ["prisma_client_JavaScript.prompt", "user_model_JavaScript.prompt", "jwt_utils_JavaScript.prompt"], "tags": ["backend", "service", "auth"], "filepath": "backend/services/authService.js"}, "user_service_JavaScript": {"filename": "user_service_JavaScript.prompt", "priority": 13, "description": "Service layer for user operations including profile retrieval, updates, and listing users by language preferences.", "dependencies": ["prisma_client_JavaScript.prompt", "user_model_JavaScript.prompt"], "tags": ["backend", "service"], "filepath": "backend/services/userService.js"}, "matching_service_JavaScript": {"filename": "matching_service_JavaScript.prompt", "priority": 14, "description": "Service for matching users based on complementary language preferences. Creates and manages match requests between users.", "dependencies": ["prisma_client_JavaScript.prompt", "match_model_JavaScript.prompt", "user_model_JavaScript.prompt"], "tags": ["backend", "service", "matching"], "filepath": "backend/services/matchingService.js"}, "chat_service_JavaScript": {"filename": "chat_service_JavaScript.prompt", "priority": 15, "description": "Service for chat functionality. Manages message creation, retrieval of conversation history, and marking messages as read.", "dependencies": ["prisma_client_JavaScript.prompt", "message_model_JavaScript.prompt"], "tags": ["backend", "service", "chat"], "filepath": "backend/services/chatService.js"}, "ai_tutor_service_JavaScript": {"filename": "ai_tutor_service_JavaScript.prompt", "priority": 16, "description": "Service that combines chat functionality with OpenAI integration to provide AI tutoring. Manages tutoring sessions and conversation context.", "dependencies": ["openai_service_JavaScript.prompt", "chat_service_JavaScript.prompt"], "tags": ["backend", "service", "ai"], "filepath": "backend/services/aiTutorService.js"}, "auth_controller_JavaScript": {"filename": "auth_controller_JavaScript.prompt", "priority": 17, "description": "Express controller for authentication routes. Validates input, calls auth service, and returns appropriate HTTP responses.", "dependencies": ["auth_service_JavaScript.prompt"], "tags": ["backend", "controller"], "filepath": "backend/controllers/authController.js"}, "user_controller_JavaScript": {"filename": "user_controller_JavaScript.prompt", "priority": 18, "description": "Express controller for user routes. Handles profile retrieval, updates, and user listing with proper error handling.", "dependencies": ["user_service_JavaScript.prompt"], "tags": ["backend", "controller"], "filepath": "backend/controllers/userController.js"}, "matching_controller_JavaScript": {"filename": "matching_controller_JavaScript.prompt", "priority": 19, "description": "Express controller for matching routes. Manages match discovery, requests, acceptance, and declining.", "dependencies": ["matching_service_JavaScript.prompt"], "tags": ["backend", "controller"], "filepath": "backend/controllers/matchingController.js"}, "chat_controller_JavaScript": {"filename": "chat_controller_JavaScript.prompt", "priority": 20, "description": "Express controller for chat routes. Manages message sending, conversation retrieval, and read receipts.", "dependencies": ["chat_service_JavaScript.prompt"], "tags": ["backend", "controller"], "filepath": "backend/controllers/chatController.js"}, "ai_tutor_controller_JavaScript": {"filename": "ai_tutor_controller_JavaScript.prompt", "priority": 21, "description": "Express controller for AI tutor routes. Manages tutoring sessions and AI conversation endpoints.", "dependencies": ["ai_tutor_service_JavaScript.prompt"], "tags": ["backend", "controller", "ai"], "filepath": "backend/controllers/aiTutorController.js"}, "auth_routes_JavaScript": {"filename": "auth_routes_JavaScript.prompt", "priority": 22, "description": "Express router for authentication endpoints including POST /register and POST /login.", "dependencies": ["auth_controller_JavaScript.prompt"], "tags": ["backend", "routes"], "filepath": "backend/routes/authRoutes.js"}, "user_routes_JavaScript": {"filename": "user_routes_JavaScript.prompt", "priority": 23, "description": "Express router for user endpoints including GET /me, PATCH /me, and GET /users with JWT authentication.", "dependencies": ["user_controller_JavaScript.prompt", "auth_middleware_JavaScript.prompt"], "tags": ["backend", "routes"], "filepath": "backend/routes/userRoutes.js"}, "matching_routes_JavaScript": {"filename": "matching_routes_JavaScript.prompt", "priority": 24, "description": "Express router for matching endpoints including GET /matches, POST /matches, and PATCH /matches/:id with JWT authentication.", "dependencies": ["matching_controller_JavaScript.prompt", "auth_middleware_JavaScript.prompt"], "tags": ["backend", "routes"], "filepath": "backend/routes/matchingRoutes.js"}, "chat_routes_JavaScript": {"filename": "chat_routes_JavaScript.prompt", "priority": 25, "description": "Express router for chat endpoints including POST /messages, GET /messages/:userId, and PATCH /messages/:id/read with JWT authentication.", "dependencies": ["chat_controller_JavaScript.prompt", "auth_middleware_JavaScript.prompt"], "tags": ["backend", "routes"], "filepath": "backend/routes/chatRoutes.js"}, "ai_tutor_routes_JavaScript": {"filename": "ai_tutor_routes_JavaScript.prompt", "priority": 26, "description": "Express router for AI tutor endpoints including POST /tutor/start and POST /tutor/chat with JWT authentication.", "dependencies": ["ai_tutor_controller_JavaScript.prompt", "auth_middleware_JavaScript.prompt"], "tags": ["backend", "routes", "ai"], "filepath": "backend/routes/aiTutorRoutes.js"}, "express_app_JavaScript": {"filename": "express_app_JavaScript.prompt", "priority": 27, "description": "Main Express app configuration with middleware (CORS, JSON parsing), route mounting, error handling, and server startup.", "dependencies": ["auth_routes_JavaScript.prompt", "user_routes_JavaScript.prompt", "matching_routes_JavaScript.prompt", "chat_routes_JavaScript.prompt", "ai_tutor_routes_JavaScript.prompt", "error_handler_JavaScript.prompt", "env_config_JavaScript.prompt"], "tags": ["backend", "app"], "filepath": "backend/server.js"}, "auth_context_JavaScriptReact": {"filename": "auth_context_JavaScriptReact.prompt", "priority": 28, "description": "React Context for managing authentication state including current user, token, login, logout, and registration functions.", "dependencies": [], "tags": ["frontend", "context", "auth"], "filepath": "frontend/src/context/AuthContext.jsx"}, "api_client_JavaScript": {"filename": "api_client_JavaScript.prompt", "priority": 29, "description": "Axios instance configured with base URL and interceptors for attaching JWT tokens to requests and handling auth errors.", "dependencies": [], "tags": ["frontend", "api"], "filepath": "frontend/src/utils/apiClient.js"}, "tailwind_config_JavaScript": {"filename": "tailwind_config_JavaScript.prompt", "priority": 30, "description": "Tailwind CSS configuration file with custom theme colors, fonts, and responsive breakpoints for the application.", "dependencies": [], "tags": ["frontend", "config", "styles"], "filepath": "frontend/tailwind.config.js"}, "login_page_JavaScriptReact": {"filename": "login_page_JavaScriptReact.prompt", "priority": 31, "description": "React component for login page with email/password form, validation, error handling, and navigation to register page.", "dependencies": ["auth_context_JavaScriptReact.prompt", "api_client_JavaScript.prompt"], "tags": ["frontend", "page", "auth"], "filepath": "frontend/src/pages/LoginPage.jsx"}, "register_page_JavaScriptReact": {"filename": "register_page_JavaScriptReact.prompt", "priority": 32, "description": "React component for registration page with form for email, password, native language, and learning language selection.", "dependencies": ["auth_context_JavaScriptReact.prompt", "api_client_JavaScript.prompt"], "tags": ["frontend", "page", "auth"], "filepath": "frontend/src/pages/RegisterPage.jsx"}, "dashboard_page_JavaScriptReact": {"filename": "dashboard_page_JavaScriptReact.prompt", "priority": 33, "description": "React component for dashboard showing user's matches, match requests, and quick navigation to chat and AI tutor features.", "dependencies": ["auth_context_JavaScriptReact.prompt", "api_client_JavaScript.prompt"], "tags": ["frontend", "page"], "filepath": "frontend/src/pages/DashboardPage.jsx"}, "matching_page_JavaScriptReact": {"filename": "matching_page_JavaScriptReact.prompt", "priority": 34, "description": "React component for matching page showing potential matches based on language preferences with accept/decline functionality.", "dependencies": ["auth_context_JavaScriptReact.prompt", "api_client_JavaScript.prompt"], "tags": ["frontend", "page", "matching"], "filepath": "frontend/src/pages/MatchingPage.jsx"}, "chat_page_JavaScriptReact": {"filename": "chat_page_JavaScriptReact.prompt", "priority": 35, "description": "React component for chat interface with message history, send functionality, and online status indicators.", "dependencies": ["auth_context_JavaScriptReact.prompt", "api_client_JavaScript.prompt"], "tags": ["frontend", "page", "chat"], "filepath": "frontend/src/pages/ChatPage.jsx"}, "ai_tutor_page_JavaScriptReact": {"filename": "ai_tutor_page_JavaScriptReact.prompt", "priority": 36, "description": "React component for AI tutor chat interface with conversation history and AI-generated language learning responses.", "dependencies": ["auth_context_JavaScriptReact.prompt", "api_client_JavaScript.prompt"], "tags": ["frontend", "page", "ai"], "filepath": "frontend/src/pages/AITutorPage.jsx"}, "navbar_component_JavaScriptReact": {"filename": "navbar_component_JavaScriptReact.prompt", "priority": 37, "description": "React component for navigation bar with links to dashboard, matches, chat, AI tutor, and logout functionality.", "dependencies": ["auth_context_JavaScriptReact.prompt"], "tags": ["frontend", "component", "ui"], "filepath": "frontend/src/components/Navbar.jsx"}, "match_card_component_JavaScriptReact": {"filename": "match_card_component_JavaScriptReact.prompt", "priority": 38, "description": "Reusable React component for displaying match card with user profile, languages, and action buttons.", "dependencies": [], "tags": ["frontend", "component", "ui"], "filepath": "frontend/src/components/MatchCard.jsx"}, "message_bubble_component_JavaScriptReact": {"filename": "message_bubble_component_JavaScriptReact.prompt", "priority": 39, "description": "Reusable React component for rendering chat message bubbles with sender info, timestamp, and read status.", "dependencies": [], "tags": ["frontend", "component", "ui"], "filepath": "frontend/src/components/MessageBubble.jsx"}, "chat_input_component_JavaScriptReact": {"filename": "chat_input_component_JavaScriptReact.prompt", "priority": 40, "description": "Reusable React component for chat input field with send button and optional TTS playback functionality.", "dependencies": [], "tags": ["frontend", "component", "ui"], "filepath": "frontend/src/components/ChatInput.jsx"}, "app_router_JavaScriptReact": {"filename": "app_router_JavaScriptReact.prompt", "priority": 41, "description": "React Router setup with route definitions, protected routes, and navigation between pages.", "dependencies": ["login_page_JavaScriptReact.prompt", "register_page_JavaScriptReact.prompt", "dashboard_page_JavaScriptReact.prompt", "matching_page_JavaScriptReact.prompt", "chat_page_JavaScriptReact.prompt", "ai_tutor_page_JavaScriptReact.prompt", "navbar_component_JavaScriptReact.prompt", "auth_context_JavaScriptReact.prompt"], "tags": ["frontend", "router"], "filepath": "frontend/src/App.jsx"}, "backend_package_JSON": {"filename": "backend_package_JSON.prompt", "priority": 42, "description": "NPM package configuration for backend with dependencies (Express, Prisma, bcrypt, jsonwebtoken, OpenAI SDK) and scripts (dev, start, migrate).", "dependencies": [], "tags": ["backend", "config"], "filepath": "backend/package.json"}, "frontend_package_JSON": {"filename": "frontend_package_JSON.prompt", "priority": 43, "description": "NPM package configuration for frontend with dependencies (React, React Router, Axios, Tailwind CSS) and scripts (dev, build, preview).", "dependencies": [], "tags": ["frontend", "config"], "filepath": "frontend/package.json"}};
+    
+    // Add hover listeners to all nodes
+    setTimeout(() => {
+        const nodes = document.querySelectorAll('.node');
+        nodes.forEach(node => {
+            const text = node.querySelector('.nodeLabel');
+            if (!text) return;
+            
+            const nodeText = text.textContent.trim();
+            const moduleId = nodeText.split(' ')[0];
+            const data = moduleData[moduleId];
+            
+            if (data) {
+                node.style.cursor = 'pointer';
+                
+                node.addEventListener('mouseenter', (e) => {
+                    showTooltip(e, data);
+                });
+                
+                node.addEventListener('mouseleave', () => {
+                    hideTooltip();
+                });
+            }
+        });
+    }, 500);
+});
+function showTooltip(e, data) {
+    hideTooltip();
+    
+    const tooltip = document.createElement('div');
+    tooltip.id = 'module-tooltip';
+    tooltip.innerHTML = `
+        <div style="font-weight:600;margin-bottom:8px;font-size:1.1em;">${data.filename}</div>
+        <div style="margin-bottom:6px;"><strong>Priority:</strong> ${data.priority}</div>
+        <div style="margin-bottom:6px;"><strong>Path:</strong> ${data.filepath}</div>
+        <div style="margin-bottom:6px;"><strong>Tags:</strong> ${data.tags.join(', ')}</div>
+        <div style="margin-bottom:6px;"><strong>Dependencies:</strong> ${data.dependencies.length > 0 ? data.dependencies.join(', ') : 'None'}</div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid #ddd;font-size:0.9em;color:#444;">${data.description}</div>
+    `;
+    
+    document.body.appendChild(tooltip);
+    
+    const rect = e.target.closest('.node').getBoundingClientRect();
+    tooltip.style.left = rect.right + 10 + 'px';
+    tooltip.style.top = rect.top + window.scrollY + 'px';
+}
+function hideTooltip() {
+    const existing = document.getElementById('module-tooltip');
+    if (existing) existing.remove();
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#fff;color:#000;padding:2rem;max-width:1400px;margin:0 auto}
+h1{font-size:2rem;font-weight:600;margin-bottom:2rem;padding-bottom:1rem;border-bottom:2px solid #000}
+.diagram{border:1px solid #000;padding:2rem;margin:2rem 0;overflow-x:auto;position:relative}
+.mermaid{display:flex;justify-content:center}
+#module-tooltip{
+    position:absolute;
+    background:#fff;
+    border:2px solid #000;
+    padding:1rem;
+    max-width:400px;
+    z-index:1000;
+    box-shadow:4px 4px 0 rgba(0,0,0,0.1);
+    font-size:0.9rem;
+    line-height:1.5;
+}
+.node{transition:opacity 0.2s}
+.node:hover{opacity:0.8}
+</style></head><body>
+<h1>Product Requirements Document (PRD)</h1>
+<div class="diagram"><pre class="mermaid">flowchart TB
+        PRD["Product Requirements Document (PRD)"]
+    
+    subgraph Frontend
+        auth_context_JavaScriptReact["auth_context_JavaScriptReact (28)"]
+        api_client_JavaScript["api_client_JavaScript (29)"]
+        tailwind_config_JavaScript["tailwind_config_JavaScript (30)"]
+        login_page_JavaScriptReact["login_page_JavaScriptReact (31)"]
+        register_page_JavaScriptReact["register_page_JavaScriptReact (32)"]
+        dashboard_page_JavaScriptReact["dashboard_page_JavaScriptReact (33)"]
+        matching_page_JavaScriptReact["matching_page_JavaScriptReact (34)"]
+        chat_page_JavaScriptReact["chat_page_JavaScriptReact (35)"]
+        ai_tutor_page_JavaScriptReact["ai_tutor_page_JavaScriptReact (36)"]
+        navbar_component_JavaScriptReact["navbar_component_JavaScriptReact (37)"]
+        match_card_component_JavaScriptReact["match_card_component_JavaScriptReact (38)"]
+        message_bubble_component_JavaScriptReact["message_bubble_component_JavaScriptReact (39)"]
+        chat_input_component_JavaScriptReact["chat_input_component_JavaScriptReact (40)"]
+        app_router_JavaScriptReact["app_router_JavaScriptReact (41)"]
+        frontend_package_JSON["frontend_package_JSON (43)"]
+    end
+    
+    subgraph Backend
+        prisma_schema_Prisma["prisma_schema_Prisma (1)"]
+        env_config_JavaScript["env_config_JavaScript (2)"]
+        prisma_client_JavaScript["prisma_client_JavaScript (3)"]
+        jwt_utils_JavaScript["jwt_utils_JavaScript (4)"]
+        error_handler_JavaScript["error_handler_JavaScript (5)"]
+        auth_middleware_JavaScript["auth_middleware_JavaScript (6)"]
+        user_model_JavaScript["user_model_JavaScript (7)"]
+        match_model_JavaScript["match_model_JavaScript (8)"]
+        message_model_JavaScript["message_model_JavaScript (9)"]
+        openai_service_JavaScript["openai_service_JavaScript (10)"]
+        tts_service_JavaScript["tts_service_JavaScript (11)"]
+        auth_service_JavaScript["auth_service_JavaScript (12)"]
+        user_service_JavaScript["user_service_JavaScript (13)"]
+        matching_service_JavaScript["matching_service_JavaScript (14)"]
+        chat_service_JavaScript["chat_service_JavaScript (15)"]
+        ai_tutor_service_JavaScript["ai_tutor_service_JavaScript (16)"]
+        auth_controller_JavaScript["auth_controller_JavaScript (17)"]
+        user_controller_JavaScript["user_controller_JavaScript (18)"]
+        matching_controller_JavaScript["matching_controller_JavaScript (19)"]
+        chat_controller_JavaScript["chat_controller_JavaScript (20)"]
+        ai_tutor_controller_JavaScript["ai_tutor_controller_JavaScript (21)"]
+        auth_routes_JavaScript["auth_routes_JavaScript (22)"]
+        user_routes_JavaScript["user_routes_JavaScript (23)"]
+        matching_routes_JavaScript["matching_routes_JavaScript (24)"]
+        chat_routes_JavaScript["chat_routes_JavaScript (25)"]
+        ai_tutor_routes_JavaScript["ai_tutor_routes_JavaScript (26)"]
+        express_app_JavaScript["express_app_JavaScript (27)"]
+        backend_package_JSON["backend_package_JSON (42)"]
+    end
+    
+    PRD --> Frontend
+    PRD --> Backend
+
+    prisma_client_JavaScript -->|uses| prisma_schema_Prisma
+    jwt_utils_JavaScript -->|uses| env_config_JavaScript
+    auth_middleware_JavaScript -->|uses| jwt_utils_JavaScript
+    user_model_JavaScript -->|uses| prisma_schema_Prisma
+    match_model_JavaScript -->|uses| prisma_schema_Prisma
+    message_model_JavaScript -->|uses| prisma_schema_Prisma
+    openai_service_JavaScript -->|uses| env_config_JavaScript
+    tts_service_JavaScript -->|uses| env_config_JavaScript
+    auth_service_JavaScript -->|uses| prisma_client_JavaScript
+    auth_service_JavaScript -->|uses| user_model_JavaScript
+    auth_service_JavaScript -->|uses| jwt_utils_JavaScript
+    user_service_JavaScript -->|uses| prisma_client_JavaScript
+    user_service_JavaScript -->|uses| user_model_JavaScript
+    matching_service_JavaScript -->|uses| prisma_client_JavaScript
+    matching_service_JavaScript -->|uses| match_model_JavaScript
+    matching_service_JavaScript -->|uses| user_model_JavaScript
+    chat_service_JavaScript -->|uses| prisma_client_JavaScript
+    chat_service_JavaScript -->|uses| message_model_JavaScript
+    ai_tutor_service_JavaScript -->|uses| openai_service_JavaScript
+    ai_tutor_service_JavaScript -->|uses| chat_service_JavaScript
+    auth_controller_JavaScript -->|uses| auth_service_JavaScript
+    user_controller_JavaScript -->|uses| user_service_JavaScript
+    matching_controller_JavaScript -->|uses| matching_service_JavaScript
+    chat_controller_JavaScript -->|uses| chat_service_JavaScript
+    ai_tutor_controller_JavaScript -->|uses| ai_tutor_service_JavaScript
+    auth_routes_JavaScript -->|uses| auth_controller_JavaScript
+    user_routes_JavaScript -->|uses| user_controller_JavaScript
+    user_routes_JavaScript -->|uses| auth_middleware_JavaScript
+    matching_routes_JavaScript -->|uses| matching_controller_JavaScript
+    matching_routes_JavaScript -->|uses| auth_middleware_JavaScript
+    chat_routes_JavaScript -->|uses| chat_controller_JavaScript
+    chat_routes_JavaScript -->|uses| auth_middleware_JavaScript
+    ai_tutor_routes_JavaScript -->|uses| ai_tutor_controller_JavaScript
+    ai_tutor_routes_JavaScript -->|uses| auth_middleware_JavaScript
+    express_app_JavaScript -->|uses| auth_routes_JavaScript
+    express_app_JavaScript -->|uses| user_routes_JavaScript
+    express_app_JavaScript -->|uses| matching_routes_JavaScript
+    express_app_JavaScript -->|uses| chat_routes_JavaScript
+    express_app_JavaScript -->|uses| ai_tutor_routes_JavaScript
+    express_app_JavaScript -->|uses| error_handler_JavaScript
+    express_app_JavaScript -->|uses| env_config_JavaScript
+    login_page_JavaScriptReact -->|uses| auth_context_JavaScriptReact
+    login_page_JavaScriptReact -->|uses| api_client_JavaScript
+    register_page_JavaScriptReact -->|uses| auth_context_JavaScriptReact
+    register_page_JavaScriptReact -->|uses| api_client_JavaScript
+    dashboard_page_JavaScriptReact -->|uses| auth_context_JavaScriptReact
+    dashboard_page_JavaScriptReact -->|uses| api_client_JavaScript
+    matching_page_JavaScriptReact -->|uses| auth_context_JavaScriptReact
+    matching_page_JavaScriptReact -->|uses| api_client_JavaScript
+    chat_page_JavaScriptReact -->|uses| auth_context_JavaScriptReact
+    chat_page_JavaScriptReact -->|uses| api_client_JavaScript
+    ai_tutor_page_JavaScriptReact -->|uses| auth_context_JavaScriptReact
+    ai_tutor_page_JavaScriptReact -->|uses| api_client_JavaScript
+    navbar_component_JavaScriptReact -->|uses| auth_context_JavaScriptReact
+    app_router_JavaScriptReact -->|uses| login_page_JavaScriptReact
+    app_router_JavaScriptReact -->|uses| register_page_JavaScriptReact
+    app_router_JavaScriptReact -->|uses| dashboard_page_JavaScriptReact
+    app_router_JavaScriptReact -->|uses| matching_page_JavaScriptReact
+    app_router_JavaScriptReact -->|uses| chat_page_JavaScriptReact
+    app_router_JavaScriptReact -->|uses| ai_tutor_page_JavaScriptReact
+    app_router_JavaScriptReact -->|uses| navbar_component_JavaScriptReact
+    app_router_JavaScriptReact -->|uses| auth_context_JavaScriptReact
+    
+    classDef frontend fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef backend fill:#E3F2FD,stroke:#1976D2,stroke-width:2px
+    classDef shared fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    classDef system fill:#E0E0E0,stroke:#616161,stroke-width:3px
+    
+    class auth_context_JavaScriptReact,api_client_JavaScript,tailwind_config_JavaScript,login_page_JavaScriptReact,register_page_JavaScriptReact,dashboard_page_JavaScriptReact,matching_page_JavaScriptReact,chat_page_JavaScriptReact,ai_tutor_page_JavaScriptReact,navbar_component_JavaScriptReact,match_card_component_JavaScriptReact,message_bubble_component_JavaScriptReact,chat_input_component_JavaScriptReact,app_router_JavaScriptReact,frontend_package_JSON frontend
+    class prisma_schema_Prisma,env_config_JavaScript,prisma_client_JavaScript,jwt_utils_JavaScript,error_handler_JavaScript,auth_middleware_JavaScript,user_model_JavaScript,match_model_JavaScript,message_model_JavaScript,openai_service_JavaScript,tts_service_JavaScript,auth_service_JavaScript,user_service_JavaScript,matching_service_JavaScript,chat_service_JavaScript,ai_tutor_service_JavaScript,auth_controller_JavaScript,user_controller_JavaScript,matching_controller_JavaScript,chat_controller_JavaScript,ai_tutor_controller_JavaScript,auth_routes_JavaScript,user_routes_JavaScript,matching_routes_JavaScript,chat_routes_JavaScript,ai_tutor_routes_JavaScript,express_app_JavaScript,backend_package_JSON backend
+    class PRD system</pre></div>
+</body></html>
